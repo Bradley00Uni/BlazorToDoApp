@@ -18,6 +18,6 @@ namespace ToDoApp.Data
 
         [Required]
         [Display(Name = "Created On")]
-        public DateTime CreatedOn { get; set; }
+        public DateTime CreatedOn { get; set; } = DateTime.Now;
     }
 }
