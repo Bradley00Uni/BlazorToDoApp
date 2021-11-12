@@ -1,0 +1,73 @@
+﻿@using ToDoBlazor.Data
+@page "/Update/{Key:int}"
+
+<h3>Update</h3>
+
+<div class="container bg-dark text-white p-5">
+    <h3>Update</h3>
+
+    <EditForm Model="ItemToUpdate" OnValidSubmit="UpdatePost">
+
+        <div class="form-group mb-3">
+            <label for="postTitle">Title</label>
+            <InputText @bind-Value="ItemToUpdate.Title" class="form-control" id="postTitle"></InputText>
+        </div>
+
+        <div class="form-group mb-3">
+            <label for="postDetails">Details</label>
+            <InputText @bind-Value="ItemToUpdate.Details" class="form-control" id="postDetails"></InputText>
+        </div>
+
+        <div class="form-group mb-3">
+            <label for="postDueDate">DueDate</label>
+            <InputDate @bind-Value="ItemToUpdate.DueDate" class="form-control" id="postDueDate"></InputDate>
+        </div>
+
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+
+        <div class="row">
+            <div class="col">
+                <button class="btn btn-outline-success w-100" type="submit">Save Item</button>
+            </div>
+            <div class="col">
+                <button class="btn btn-outline-danger w-100" type="reset">Clear</button>
+            </div>
+            <div class="col">
+                <button class="btn btn-outline-secondary w-100" @onclick="@(() => NavMan.NavigateTo("/"))">Cancel</button>
+            </div>
+        </div>
+
+
+
+    </EditForm>
+</div>
+
+
+@code {
+
+    [Inject] NavigationManager NavMan { get; set; }
+    [Inject] ApplicationDbContext _db { get; set; }
+
+    private ToDoItem ItemToUpdate = new ToDoItem();
+
+    [Parameter] public int Key { get; set; }
+
+    private async Task UpdatePost()
+    {
+        _db.ToDoItems.Update(ItemToUpdate);
+        await _db.SaveChangesAsync();
+        NavMan.NavigateTo("/");
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        ItemToUpdate = await _db.ToDoItems.FindAsync(Key);
+
+        if (ItemToUpdate == null)
+        {
+            NavMan.NavigateTo("/");
+        }
+    }
+}

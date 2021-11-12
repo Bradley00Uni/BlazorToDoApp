@@ -3,12 +3,12 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using ToDoApp.Data;
+using ToDoBlazor.Data;
 
-namespace ToDoApp.Migrations
+namespace ToDoBlazor.Migrations
 {
-    [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(ApplicationDbContext))]
+    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
@@ -16,21 +16,31 @@ namespace ToDoApp.Migrations
             modelBuilder
                 .HasAnnotation("ProductVersion", "5.0.11");
 
-            modelBuilder.Entity("ToDoApp.Data.ToDoItem", b =>
+            modelBuilder.Entity("ToDoBlazor.Data.ToDoItem", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("Key")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime>("CreatedOn")
+                    b.Property<DateTime>("Added")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Item")
+                    b.Property<string>("Details")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("DueDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
-                    b.HasKey("Id");
+                    b.Property<bool>("isCompleted")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Key");
 
                     b.ToTable("ToDoItems");
                 });

@@ -1,0 +1,64 @@
+﻿@page "/Create"
+@using ToDoBlazor.Data
+@using ToDoBlazor.Services 
+@inject StateManager stateManager; 
+
+<div class="container bg-dark text-white p-5">
+    <h3>Create</h3>
+
+    <EditForm Model="toDoItem" OnValidSubmit="CreatePost">
+
+        <div class="form-group mb-3">
+            <label for="postTitle">Title</label>
+            <InputText @bind-Value="toDoItem.Title" class="form-control" id="postTitle"></InputText>
+        </div>
+
+        <div class="form-group mb-3">
+            <label for="postDetails">Details</label>
+            <InputText @bind-Value="toDoItem.Details" class="form-control" id="postDetails"></InputText>
+        </div>
+
+        <div class="form-group mb-3">
+            <label for="postDueDate">DueDate</label>
+            <InputDate @bind-Value="toDoItem.DueDate" class="form-control" id="postDueDate"></InputDate>
+        </div>
+
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <!--Html.ValidationSummary(true, "", new { class = "alert alert-danger"})-->
+
+        <div class="row">
+            <div class="col">
+                <button class="btn btn-outline-success w-100" type="submit">Add Item</button>
+            </div>
+            <div class="col">
+                <button class="btn btn-outline-danger w-100" type="reset">Clear</button>
+            </div>
+        </div>
+
+        
+
+    </EditForm>
+</div>
+
+@code {
+
+    [Inject] NavigationManager NavMan { get; set; }
+    [Inject] ApplicationDbContext _db { get; set; }
+
+    private ToDoItem toDoItem = new ToDoItem();
+
+    private async Task CreatePost()
+    {
+        toDoItem.Added = DateTime.Now;
+        toDoItem.isCompleted = false;
+
+        await _db.ToDoItems.AddAsync(toDoItem);
+        await _db.SaveChangesAsync();
+        NavMan.NavigateTo("/");
+
+        toDoItem = new ToDoItem();
+
+        stateManager.CallOnChange();
+    }
+}

@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace ToDoApp.Migrations
+namespace ToDoBlazor.Migrations
 {
     public partial class init : Migration
     {
@@ -11,14 +11,17 @@ namespace ToDoApp.Migrations
                 name: "ToDoItems",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                    Key = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Item = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
-                    CreatedOn = table.Column<DateTime>(type: "TEXT", nullable: false)
+                    Title = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
+                    Details = table.Column<string>(type: "TEXT", nullable: true),
+                    Added = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    DueDate = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    isCompleted = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ToDoItems", x => x.Id);
+                    table.PrimaryKey("PK_ToDoItems", x => x.Key);
                 });
         }
 

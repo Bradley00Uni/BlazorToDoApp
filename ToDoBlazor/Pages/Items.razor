@@ -1,0 +1,75 @@
+﻿@using ToDoBlazor.Data
+@using ToDoBlazor.Services
+@using Microsoft.EntityFrameworkCore
+@inject IJSRuntime _RunTime
+@inject StateManager stateManager 
+@implements IDisposable
+
+<h1>Items</h1>
+
+
+<table class="table table-dark table-striped">
+    <thead>
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Title</th>
+            <th scope="col">Details</th>
+            <th scope="col">Date Added</th>
+            <th scope="col">Date Due</th>
+            <th scope="col">Completed?</th>
+            <th scope="col">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in _items)
+        {
+            <tr>
+                <td>@item.Key</td>
+                <td>@item.Title</td>
+                <td>@item.Details</td>
+                <td>@item.Added</td>
+                <td>@item.DueDate</td>
+                <td>@item.isCompleted</td>
+                <td>
+                    <a class="btn btn-primary" href="/Update/@item.Key">Update</a>
+                    <button class="btn btn-danger" @onclick="() => DeleteItem(item)">Delete</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code{
+    [Inject] ApplicationDbContext _db { get; set; }
+    private List<ToDoItem> _items = new List<ToDoItem>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _items = await _db.ToDoItems.ToListAsync();
+        stateManager.OnChange += Render;
+    }
+
+    public void Dispose()
+    {
+        stateManager.OnChange -= Render;
+    }
+
+    private async Task DeleteItem(ToDoItem itemToDelete)
+    {
+        bool confirm = await _RunTime.InvokeAsync<bool>("confirm", $"Are you sure you want to delete \"{itemToDelete.Title}\"?");
+
+        if (confirm)
+        {
+            _db.ToDoItems.Remove(itemToDelete); //Removing Item from the db...
+            await _db.SaveChangesAsync();
+            _items.Remove(itemToDelete); //Removing Items from the List after they're deleted from db
+            StateHasChanged(); //Re-renders the state of the app when something has changed...
+        }
+    }
+
+    private async void Render()
+    {
+        _items = await _db.ToDoItems.ToListAsync();
+        StateHasChanged();
+    }
+}

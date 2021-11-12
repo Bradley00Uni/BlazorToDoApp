@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace ToDoApp.Migrations
+namespace ToDoBlazor.Migrations
 {
-    public partial class ghh : Migration
+    public partial class newItems : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
